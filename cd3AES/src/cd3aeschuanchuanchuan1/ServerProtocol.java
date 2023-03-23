@@ -50,9 +50,7 @@ public class ServerProtocol implements Runnable {
             DataInputStream fromClient = new DataInputStream(clientSocket.getInputStream());
 
             threadLogger.log(Level.INFO, "Sending process started.");
-
             toClient.writeUTF(key);
-            
             // Gửi tên file
             toClient.writeUTF(fileName);
             // Mã hóa nội dung file

@@ -21,14 +21,18 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.UnknownHostException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Base64;
+import java.util.Random;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
@@ -53,7 +57,6 @@ public class AES_Demo extends javax.swing.JFrame {
         setLocationRelativeTo(this);
     }
 
-    // Đọc file
     public static byte[] keygeneration(int num) throws Exception {
 
         KeyGenerator generator = KeyGenerator.getInstance("AES");
@@ -63,6 +66,7 @@ public class AES_Demo extends javax.swing.JFrame {
 
     }
 
+    // Đọc file
     public static String readFile(String fileName) {
         InputStream inStream = null;
         String fileContent = "";
@@ -113,40 +117,43 @@ public class AES_Demo extends javax.swing.JFrame {
         }
     }
 
-//    public void writeFile(String fileName, String fileContent) {
-//        Writer writer = null;
-//        try {
-////        File inputFile = jFileChooser2.getSelectedFile();
-//                File SaveFile = jFileChooser2.getSelectedFile();
-//                Path path = Paths.get(SaveFile.getAbsolutePath());
-//                SaveFile = new File(jFileChooser2.getSelectedFile() + "/decryptedimage.jpg");
-//                FileOutputStream fos = new FileOutputStream(SaveFile);
-//                fos.write(fileContent);
-//                fos.flush();
-//                fos.close();
-//        
-////            writer = new OutputStreamWriter(new FileOutputStream(fileName), "UTF-8");
-////
-////            writer.write(fileContent);
-//
-//        } catch (Exception e) {
-//            System.err.println("Error while writing into file " + fileName + ": " + e);
-//        } finally {
-//            try {
-//                if (writer != null) {
-//                    writer.close();
-//                }
-//            } catch (Exception ex) {
-//                System.err.println("Error while closing File I/O: " + ex);
-//            }
-//        }
-//    }
     // Hàm lấy tên file từ path
     public static String getFileName(String filePath) {
 
         String[] split = filePath.split("\\/");
 
         return split[split.length - 1];
+    }
+
+    public static boolean isValidIPAddress(String ipAddress) {
+        try {
+            // Kiểm tra xem chuỗi đầu vào có phải là một địa chỉ IP hợp lệ hay không
+            InetAddress inetAddress = InetAddress.getByName(ipAddress);
+            return inetAddress.getHostAddress().equals(ipAddress);
+        } catch (UnknownHostException ex) {
+            return false;
+        }
+    }
+    private static final String IPADDRESS_PATTERN
+            = "^([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\."
+            + "([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\."
+            + "([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\."
+            + "([01]?\\d\\d?|2[0-4]\\d|25[0-5])$";
+
+    public static boolean isValidIPAddress1(String ipAddress) {
+        return Pattern.matches(IPADDRESS_PATTERN, ipAddress);
+    }
+
+    public static boolean isValidDirectory(String directoryPath) {
+        Path path = Paths.get(directoryPath);
+        return Files.isDirectory(path);
+    }
+
+    public static boolean isValidWindowsFilePath(String filePath) {
+        String regex = "^([a-zA-Z]:)?(\\\\[\\w-]+)*(\\\\[\\w-.]+)+\\.txt$";
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(filePath);
+        return matcher.matches();
     }
 
     /**
@@ -276,9 +283,9 @@ public class AES_Demo extends javax.swing.JFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(port, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 40, Short.MAX_VALUE)
+                        .addGap(18, 18, 18)
                         .addComponent(btn_encryptText, javax.swing.GroupLayout.PREFERRED_SIZE, 225, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(status, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(62, 62, 62))
                     .addGroup(jPanel1Layout.createSequentialGroup()
@@ -306,7 +313,7 @@ public class AES_Demo extends javax.swing.JFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(34, 34, 34)
                 .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 63, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 77, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -328,12 +335,18 @@ public class AES_Demo extends javax.swing.JFrame {
                             .addComponent(jLabel6)
                             .addComponent(port, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(status))
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addContainerGap(36, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(btn_encryptText, javax.swing.GroupLayout.PREFERRED_SIZE, 63, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(14, 14, 14))))
+                        .addContainerGap())))
         );
+
+        jTextField4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jTextField4ActionPerformed(evt);
+            }
+        });
 
         jButton3.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
         jButton3.setText("Save folder");
@@ -361,38 +374,40 @@ public class AES_Demo extends javax.swing.JFrame {
                 .addContainerGap()
                 .addComponent(filler1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 682, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(btn_decryptText, javax.swing.GroupLayout.PREFERRED_SIZE, 147, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(140, 140, 140))
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
-                                .addGap(120, 120, 120)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addGap(117, 117, 117)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                            .addGroup(layout.createSequentialGroup()
-                                                .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                .addGap(23, 23, 23))
-                                            .addGroup(layout.createSequentialGroup()
-                                                .addComponent(jLabel8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                                .addGap(89, 89, 89)))
-                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                            .addComponent(txt_portdecrypt, javax.swing.GroupLayout.PREFERRED_SIZE, 199, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                            .addComponent(txt_server, javax.swing.GroupLayout.PREFERRED_SIZE, 199, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                            .addComponent(jTextField4)))
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addGap(18, 18, 18)
-                                        .addComponent(status2, javax.swing.GroupLayout.PREFERRED_SIZE, 337, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                                    .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(36, 36, 36)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(txt_portdecrypt, javax.swing.GroupLayout.PREFERRED_SIZE, 199, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(txt_server, javax.swing.GroupLayout.PREFERRED_SIZE, 199, javax.swing.GroupLayout.PREFERRED_SIZE)))
                             .addGroup(layout.createSequentialGroup()
-                                .addGap(164, 164, 164)
-                                .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 269, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                                .addGap(240, 240, 240)
+                                .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 269, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addGap(70, 70, 70)
+                                        .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(18, 18, 18))
+                                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(51, 51, 51)))
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, 255, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(status2, javax.swing.GroupLayout.PREFERRED_SIZE, 337, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                        .addGap(67, 67, Short.MAX_VALUE))))
             .addGroup(layout.createSequentialGroup()
                 .addGap(75, 75, 75)
                 .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 1045, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -441,7 +456,19 @@ public class AES_Demo extends javax.swing.JFrame {
     JFileChooser jFileChooser1 = new JFileChooser();
     JFileChooser jFileChooser2 = new JFileChooser();
     private void btn_decryptTextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_decryptTextActionPerformed
-
+        if (txt_server.getText().trim().equals("") || txt_portdecrypt.getText().trim().equals("") || jTextField4.getText().trim().equals("")) {
+            announcement("Please enter all fields !!!");
+            return;
+        } else if (!isValidIPAddress1(txt_server.getText().trim())) {
+            announcement("Invalid IP Server. Please re-enter!");
+            return;
+        } else if (!isValidServerSocketPort(txt_portdecrypt.getText().trim())) {
+            announcement("Invalid Port. Please re-enter!");
+            return;
+        } else if (!isValidDirectory(jTextField4.getText().trim())) {
+            announcement("Invalid Save Folder. Please Choose Again!");
+            return;
+        }
         int r = 0;
         try {
 
@@ -484,7 +511,7 @@ public class AES_Demo extends javax.swing.JFrame {
                 } else if (Base64.getDecoder().decode(key).length == 32) {
                     r = 14;
                 }
-            }else if (cb_typekey.getSelectedItem().toString().equals("Ascii")){
+            } else if (cb_typekey.getSelectedItem().toString().equals("Ascii")) {
                 if (key.length() == 16) {
                     r = 10;
                 } else if (key.length() == 24) {
@@ -500,7 +527,7 @@ public class AES_Demo extends javax.swing.JFrame {
             // Ghi đoạn văn đã giải mã vào file
 //            writeFile(fileLoc, decryptedFile);
             File inputFile = jFileChooser1.getSelectedFile();
-            inputFile = new File(jFileChooser2.getSelectedFile() + "/"+fileLoc);
+            inputFile = new File(jFileChooser2.getSelectedFile() + "/" + fileLoc);
             FileOutputStream fos = new FileOutputStream(inputFile);
             fos.write(decryptedFile);
             fos.flush();
@@ -511,16 +538,18 @@ public class AES_Demo extends javax.swing.JFrame {
 
         } catch (Exception e) {
             System.err.println("Error while creating/reading server socket: " + e);
+            announcement("Error while creating/reading server socket.");
+            return;
         }
     }//GEN-LAST:event_btn_decryptTextActionPerformed
     public byte[] decryptFile(String encryptedText, String secretKey, int r) {
 //        return new String(new AES(secretKey.getBytes()).ECB_decrypt(Base64.getDecoder().decode(encryptedText)));
-            byte[] keys = null ;
-          if (cb_typekey.getSelectedItem().toString().equals("Base64")) {
-               keys = Base64.getDecoder().decode(secretKey);
-            }else if (cb_typekey.getSelectedItem().toString().equals("Ascii")){
-               keys = secretKey.getBytes();
-            }
+        byte[] keys = null;
+        if (cb_typekey.getSelectedItem().toString().equals("Base64")) {
+            keys = Base64.getDecoder().decode(secretKey);
+        } else if (cb_typekey.getSelectedItem().toString().equals("Ascii")) {
+            keys = secretKey.getBytes();
+        }
         return (AES.decrypt(Base64.getDecoder().decode(encryptedText), keys, r));
     }
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
@@ -539,18 +568,122 @@ public class AES_Demo extends javax.swing.JFrame {
             System.out.println("You must choose a save directory.");
         }
     }//GEN-LAST:event_jButton3ActionPerformed
+    public boolean checkBlankField() // Kiểm tra các trường nhập có rỗng hay không?
+    {
+        return jTextField1.getText().trim().equals("") || txt_inputkey.getText().trim().equals("") || port.getText().trim().equals("");
+    }
+
+    public void announcement(String str) {// Hiện thị thông báo
+        JOptionPane.showMessageDialog(null, str);
+    }
+
+    public static boolean isValidBase64(String str) {
+        if (str == null || str.length() < 4) {
+            return false;
+        }
+
+        // Kiểm tra chuỗi có độ dài chia hết cho 4 hay không
+        if (str.length() % 4 != 0) {
+            return false;
+        }
+
+        // Kiểm tra chuỗi chỉ chứa các ký tự hợp lệ của Base64
+        Pattern pattern = Pattern.compile("^[a-zA-Z0-9+/]*={0,2}$");
+        if (!pattern.matcher(str).matches()) {
+            return false;
+        }
+
+        // Kiểm tra ký tự '=' nếu có chỉ xuất hiện ở cuối chuỗi
+        int equalsCount = 0;
+        int len = str.length();
+        if (str.charAt(len - 1) == '=') {
+            equalsCount++;
+            if (str.charAt(len - 2) == '=') {
+                equalsCount++;
+            }
+        }
+        if (equalsCount > 2) {
+            return false;
+        }
+
+        try {
+            // Kiểm tra giá trị byte của các ký tự trong chuỗi Base64
+            Base64.getDecoder().decode(str);
+            return true;
+        } catch (IllegalArgumentException e) {
+            return false;
+        }
+    }
+
+    public static boolean isValidAscii(String str) {
+        if (str == null) {
+            return false;
+        }
+        for (int i = 0; i < str.length(); i++) {
+            char c = str.charAt(i);
+            if ((int) c > 127) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public static boolean isValidServerSocketPort(String str) {
+        try {
+            int port = Integer.parseInt(str);
+            if (port >= 0 && port <= 65535) {
+                return true;
+            }
+        } catch (NumberFormatException e) {
+            // Không phải chuỗi số
+        }
+        return false;
+    }
 
     private void btn_encryptTextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_encryptTextActionPerformed
-      
+        int a = Integer.parseInt(jComboBox1.getSelectedItem().toString());
+        if (!checkBlankField()) {
+            if (!isValidWindowsFilePath(jTextField1.getText().trim())) {
+                announcement("Invalid Folder. Please Choose Again!");
+                return;
+            } else if (!isValidServerSocketPort(port.getText().trim())) {
+                announcement("Invalid Port. Please re-enter!");
+                return;
+            }
+            if (cb_typekey.getSelectedItem().toString().equals("Ascii")) {
+                if (isValidAscii(txt_inputkey.getText().trim())) {
+                    if (txt_inputkey.getText().trim().length() != (a / 8)) {
+                        announcement("Invalid key length, valid length is 16, 24, 32byte !!! Please re-enter!");
+                        return;
+                    }
+                } else {
+                    announcement("Invalid key. Please re-enter!");
+                    return;
+                }
+            } else if (cb_typekey.getSelectedItem().toString().equals("Base64")) {
+                if (isValidBase64(txt_inputkey.getText().trim())) {
+                    if (Base64.getDecoder().decode(txt_inputkey.getText().trim()).length != (a / 8)) {
+                        announcement("Invalid key length, valid length is 16, 24, 32byte !!! Please re-enter!");
+                        return;
+                    }
+                } else {
+                    announcement("Invalid key. Please re-enter!");
+                    return;
+                }
+            }
+        } else {
+            announcement("Please enter all fields !!!");
+            return;
+        }
         String keyType = cb_typekey.getSelectedItem().toString();
         double t;
         String data = "";
         try {
             // Khởi tạo server socket
-            int p = Integer.parseInt(port.getText().toString());
+            int p = Integer.parseInt(port.getText().trim());
             System.out.println(p);
             ServerSocket serverSocket = new ServerSocket(p);
-
+            announcement("Transfer Success!!");
             // Khởi tạo logger cho tiến trình
             Logger threadLogger = Logger.getLogger("serverLogger");
             System.out.println("Server is reading file. Wait until finished!");
@@ -575,15 +708,15 @@ public class AES_Demo extends javax.swing.JFrame {
 
             if (!fileContent.equalsIgnoreCase("")) {
                 // Lấy file name
-                String fileName = getFileName(jTextField1.getText().toString());
+                String fileName = getFileName(jTextField1.getText().trim().toString());
 
-                System.out.println("Serving clients on port " + port.getText().toString() + ". Now you can get file from clients");
+                System.out.println("Serving clients on port " + port.getText().trim().toString() + ". Now you can get file from clients");
 
                 while (true) {
                     Socket clientSocket = serverSocket.accept();
 
                     // Khởi tạo 1 tiến trình cho client mới
-                    Thread thread = new Thread(new ServerProtocol(clientSocket, threadLogger, fileName, fileContent, txt_inputkey.getText(),keyType));
+                    Thread thread = new Thread(new ServerProtocol(clientSocket, threadLogger, fileName, fileContent, txt_inputkey.getText().trim(), keyType));
                     thread.start();
                     threadLogger.info("Created and started new thread " + thread.getName() + " for client.");
                 }
@@ -613,43 +746,67 @@ public class AES_Demo extends javax.swing.JFrame {
             System.out.println("You must choose a file.");
         }
     }//GEN-LAST:event_jButton1ActionPerformed
+    private static final String ASCII_CHARACTERS = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~";
+    private static final Random RANDOM = new Random();
+
+    public static String generateRandomAsciiString(int length) {
+        StringBuilder sb = new StringBuilder(length);
+
+        for (int i = 0; i < length; i++) {
+            int randomIndex = RANDOM.nextInt(ASCII_CHARACTERS.length());
+            char randomChar = ASCII_CHARACTERS.charAt(randomIndex);
+            sb.append(randomChar);
+        }
+        return sb.toString();
+    }
 
     private void btn_randomkeyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_randomkeyActionPerformed
         byte[] k = null;
+        String key1 = null;
         try {
-            //        byte[] k = new byte[16];
-            //         byte[] k = new byte[24];
-            int a = Integer.parseInt(jComboBox1.getSelectedItem().toString());
-            switch (a) {
-                case 128:
-                k = new byte[16];
-                k = keygeneration(128);
-                break;
-                case 192:
-                k = new byte[24];
-                k = keygeneration(192);
-                break;
-                case 256:
-                k = new byte[32];
-                k = keygeneration(256);
-                break;
-                default:
-                break;
+            if (cb_typekey.getSelectedItem().toString().equals("Base64")) {
+                //        byte[] k = new byte[16];
+                //         byte[] k = new byte[24];
+                int a = Integer.parseInt(jComboBox1.getSelectedItem().toString());
+                switch (a) {
+                    case 128:
+                        k = new byte[16];
+                        k = keygeneration(128);
+                        break;
+                    case 192:
+                        k = new byte[24];
+                        k = keygeneration(192);
+                        break;
+                    case 256:
+                        k = new byte[32];
+                        k = keygeneration(256);
+                        break;
+                    default:
+                        break;
+                }
+
+                String keyString = Base64.getEncoder().encodeToString(k); // Chuyển đổi khóa bí mật sang chuỗi Base64
+                txt_inputkey.setText(keyString);
+                System.out.println(keyString);
+                System.out.println("dia chi khoa: " + k); //địa chỉ tham chiếu của mảng byte chứa giá trị khóa bí mật
+            } else if (cb_typekey.getSelectedItem().toString().equals("Ascii")) {
+                int a = Integer.parseInt(jComboBox1.getSelectedItem().toString());
+                switch (a) {
+                    case 128:
+                        key1 = generateRandomAsciiString(16);
+                        break;
+                    case 192:
+                        key1 = generateRandomAsciiString(24);
+                        break;
+                    case 256:
+                        key1 = generateRandomAsciiString(32);
+                        break;
+                    default:
+                        break;
+                }
+                txt_inputkey.setText(key1);
+                System.out.println(key1);
             }
-
-            //            StringBuilder sb = new StringBuilder();
-            //            for (int i = 0; i < k.length; i++) {
-                //                sb.append(k[i]);
-                //                if (i < k.length - 1) {
-                    //                    sb.append(",");
-                    //                }
-                //            }
-            //            String result = sb.toString();
-            String keyString = Base64.getEncoder().encodeToString(k); // Chuyển đổi khóa bí mật sang chuỗi Base64
-            txt_inputkey.setText(keyString);
-            System.out.println(keyString);
-
-            System.out.println("dia chi khoa: " + k); //địa chỉ tham chiếu của mảng byte chứa giá trị khóa bí mật
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
@@ -658,6 +815,10 @@ public class AES_Demo extends javax.swing.JFrame {
     private void status2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_status2ActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_status2ActionPerformed
+
+    private void jTextField4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField4ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jTextField4ActionPerformed
     // Chuyển một mảng byte thành một chuỗi hex
     private static String bytesToHex(byte[] bytes) {
         StringBuilder builder = new StringBuilder();
